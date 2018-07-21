@@ -3,6 +3,6 @@ const app = require('./app');
 
 const port = config.get('PORT');
 
-app.listen(port, () => {
+app(config).listen(port, () => {
   console.log(`Listening now on port ${port}`);
 });
