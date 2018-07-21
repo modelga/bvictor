@@ -12,11 +12,15 @@ const proxiedBetVictorConfig = {
   }
 };
 
-test('should return non-empty list of sports', async t => {
+test('should return non-empty list of sports and self-link', async t => {
   const server = supertest(app(proxiedBetVictorConfig));
   const { body } = await server.get('/sports').expect(200);
-  t.true(Array.isArray(body), 'Sports list has to be an array');
-  t.true(body.length > 0, 'Sports list has not to be empty');
+  t.true(Array.isArray(body.sports), 'Sports list has to be an array');
+  t.true(body.sports.length > 0, 'Sports list has not to be empty');
+  t.true(
+    body.links.self === '/sports',
+    'Body links has to be exact as requested'
+  );
 });
 
 test('should return formatted list of sports', async t => {
@@ -29,6 +33,7 @@ test('should return formatted list of sports', async t => {
     self: 'string',
     pos: 'number'
   });
-  const matchingElements = R.filter(sport.test, body);
-  t.true(matchingElements.length === body.length);
+
+  const matchingElements = R.filter(sport.test, body.sports);
+  t.true(matchingElements.length === body.sports.length);
 });
