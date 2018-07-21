@@ -12,6 +12,6 @@ const proxiedBetVictorConfig = {
 
 test('should return list of sports', async t => {
   const server = supertest(app(proxiedBetVictorConfig));
-  const data = await server.get('/').expect(200);
+  const data = await server.get('/sports').expect(200);
   t.pass();
 });
