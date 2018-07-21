@@ -1,5 +1,8 @@
 const links = {
-  BASE: '/sports'
+  BASE: '/sports',
+  resources: {
+    sportEvents: ({ id }) => `${links.BASE}/${id}`
+  }
 };
 
 module.exports = links;

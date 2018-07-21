@@ -25,7 +25,10 @@ test('should return formatted list of sports', async t => {
 
   const sport = struct({
     id: 'number',
-    title: 'string'
+    title: 'string',
+    self: 'string',
+    pos: 'number'
   });
-  t.true(R.filter(sport.test, body).length === body.length);
+  const matchingElements = R.filter(sport.test, body);
+  t.true(matchingElements.length === body.length);
 });
