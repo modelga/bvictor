@@ -4,6 +4,13 @@
     <title>Bet victor</title>
   </head>
   <body>
+    <p>
+      {{#if i18}}
+        {{#i18}}
+            <a href="{{link}}">{{name}}</a>
+        {{/i18}}
+      {{/if}}
+    </p>
     {{#if links.self }} 
       <a href={{links.self}}>Refresh</a>
     {{/if}}

@@ -5,10 +5,10 @@ const log = debug('bet-victor:sports-live:provider');
 const Cache = require('../cache');
 
 module.exports = config => {
-  const getData = async () => {
+  const getData = async lang => {
     log('Refresh live data');
     const response = await axios.get(
-      `${config.get('UPSTREAM_BASE_URL')}/en-gb/live/live/list.json`
+      `${config.get('UPSTREAM_BASE_URL')}/${lang}/live/live/list.json`
     );
     return response.data;
   };

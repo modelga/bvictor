@@ -8,11 +8,12 @@ module.exports = config => {
   const app = Router();
   const liveDataProvider = LiveDataProvider(config);
   const liveDataService = LiveDataService(liveDataProvider);
-  const controller = Controller(liveDataService);
+  const controller = Controller(config, liveDataService);
 
-  app.get(links.BASE, controller.sportsList);
-  app.get(links.resources.sportEvents(), controller.eventsList);
-  app.get(links.resources.sportOutcomes(), controller.outcomesList);
+  app.get(links.BASE, controller.sportsRedirect);
+  app.get(links.BASE_i18(':lang'), controller.sportsList);
+  app.get(links.resources(':lang').sportEvents(), controller.eventsList);
+  app.get(links.resources(':lang').sportOutcomes(), controller.outcomesList);
 
   return app;
 };
