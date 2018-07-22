@@ -1,7 +1,7 @@
 const R = require('ramda');
 const Format = require('./format');
 
-const withTry = controller => async (req, res, next) => {
+const withTryAndFormat = controller => async (req, res, next) => {
   try {
     await controller(req, Format(req, res));
   } catch (e) {
@@ -9,7 +9,7 @@ const withTry = controller => async (req, res, next) => {
   }
 };
 
-const withHandleErrors = R.map(withTry);
+const withHandleErrors = R.map(withTryAndFormat);
 
 module.exports = service =>
   withHandleErrors({
