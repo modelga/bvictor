@@ -6,7 +6,7 @@ const Redis = require('./redis');
 const log = debug('bet-victor:sports-live:cache');
 
 module.exports = (config, dataFn) => {
-  const engine = config.get('CACHE_ENGINE') || 'none';
+  const engine = config.get('CACHE_ENGINE');
   if (typeof engine === 'function') {
     return engine;
   }

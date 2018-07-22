@@ -1,7 +1,6 @@
-const Redis = require('redis-fast-driver');
-const URL = require('url');
 const debug = require('debug');
 const R = require('ramda');
+const DB = require('./redis-db');
 
 const log = debug('bet-victor:sports-live:redis');
 
@@ -20,21 +19,8 @@ const RedisCache = (db, dataFn, ttl) => async key => {
   return newData;
 };
 
-module.exports = (config, dataFn, fallback = dataFn) => {
-  const connectionUrl = URL.parse(config.get('REDIS_URL'));
-  const db = new Redis({
-    host: connectionUrl.hostname,
-    port: connectionUrl.port,
-    auth: connectionUrl.auth && connectionUrl.auth.split(':')[1],
-    maxRetries: 5
-  });
-  db.on('error', e => {
-    if (e.message.indexOf('exhausted retries') !== -1) {
-      throw e;
-    }
-    log('Redis Error', e);
-  });
-
+module.exports = (config, dataFn, fallback) => {
+  const db = DB(config);
   const ttl = config.get('CACHE_TTL_SECONDS');
   const redisCache = RedisCache(db, dataFn, ttl);
   return key => {
