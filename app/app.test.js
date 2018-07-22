@@ -90,4 +90,6 @@ test('should navigate on list of sports', async t => {
     eventsResponse.body.events
   );
   const outcomeResponse = await server.get(eventWithOutcomes.self).expect(200);
+  const { outcomes } = outcomeResponse.body;
+  t.true(outcomes.length === eventWithOutcomes.total_outcomes);
 });
