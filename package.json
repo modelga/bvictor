@@ -2,7 +2,8 @@
     "scripts": {
         "start": "node app",
         "start:local": "npx nf start",
-        "test": "ava",
+        "test": "ava **/*test.js !**/*integration*.test.js !**/*suite*.test.js",
+        "test:integration": "ava **/*test.js !**/*suite*.test.js",
         "test:coverage": "npx nyc --all ava",
         "lint": "zoe",
         "format": "zoe --fix"
@@ -28,6 +29,12 @@
             "**/*.test.js",
             "config/**",
             "app/index.js"
+        ]
+    },
+    "ava": {
+        "files" : [
+            "**/*.test.js",
+            "!**/*suite*.test.js"
         ]
     }
 }
