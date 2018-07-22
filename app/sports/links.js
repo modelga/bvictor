@@ -1,7 +1,15 @@
+const R = require('ramda');
+
 const links = {
   BASE: '/sports',
   resources: {
-    sportEvents: ({ id }) => `${links.BASE}/${id}`
+    sportEvents(sport) {
+      return `${links.BASE}/${(sport || {}).id || ':id'}`;
+    },
+    sportOutcomes(sport, event) {
+      return `${links.resources.sportEvents(sport)}/events/${event.id ||
+        ':eid'}`;
+    }
   }
 };
 

@@ -9,6 +9,9 @@ module.exports = config => {
   const liveDataProvider = LiveDataProvider(config);
   const liveDataService = LiveDataService(liveDataProvider);
   const controller = Controller(liveDataService);
+
   app.get(links.BASE, controller.sportsList);
+  app.get(links.resources.sportEvents(), controller.eventsList);
+
   return app;
 };

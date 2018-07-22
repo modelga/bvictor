@@ -15,5 +15,9 @@ module.exports = service =>
   withHandleErrors({
     async sportsList(req, format) {
       format.sportsList(await service.getSports());
+    },
+    async eventsList(req, format) {
+      const id = Number(req.params.id);
+      format.eventsList(await service.getEvents(id));
     }
   });

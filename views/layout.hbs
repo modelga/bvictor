@@ -7,6 +7,9 @@
     {{#if links.self }} 
       <a href={{links.self}}>Refresh</a>
     {{/if}}
+    {{#if links.parent }} 
+      <a href={{links.parent}}>Up</a>
+    {{/if}}
     {{{body}}}
   </body>
 </html>

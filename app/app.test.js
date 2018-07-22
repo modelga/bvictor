@@ -38,3 +38,28 @@ test('should return formatted list of sports', async t => {
   const matchingElements = R.filter(sport.test, body.sports);
   t.true(matchingElements.length === body.sports.length);
 });
+
+test('should eturn formatted list of events', async t => {
+  const server = supertest(app(proxiedBetVictorConfig));
+  const sportsResponse = await server.get('/sports').expect(200);
+  const firstSport = R.path(['body', 'sports', 0], sportsResponse);
+  const { body } = await server.get(firstSport.self).expect(200);
+  const event = struct({
+    id: 'number',
+    title: 'string',
+    self: 'string',
+    pos: 'number',
+    status: 'string',
+    total_outcomes: 'number'
+  });
+  const matchingElements = R.filter(event.test, body.events);
+  t.true(matchingElements.length === body.events.length);
+});
+
+test('should navigate on list of sports', async t => {
+  const server = supertest(app(proxiedBetVictorConfig));
+  const sportsResponse = await server.get('/sports').expect(200);
+  const firstSport = R.path(['body', 'sports', 0], sportsResponse);
+  const eventsResponse = await server.get(firstSport.self).expect(200);
+  t.true(eventsResponse.body.events.length === firstSport.events_count);
+});
