@@ -9,7 +9,8 @@ module.exports = provider => ({
     return sortByPos(
       R.map(
         R.pipe(
-          R.pick(['title', 'id', 'pos']),
+          sport => R.assoc('events_count', (sport.events || []).length, sport),
+          R.pick(['title', 'id', 'pos', 'events_count']),
           sport => R.assoc('self', links.resources.sportEvents(sport), sport)
         ),
         data.sports

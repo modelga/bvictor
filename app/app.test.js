@@ -31,7 +31,8 @@ test('should return formatted list of sports', async t => {
     id: 'number',
     title: 'string',
     self: 'string',
-    pos: 'number'
+    pos: 'number',
+    events_count: 'number'
   });
 
   const matchingElements = R.filter(sport.test, body.sports);
