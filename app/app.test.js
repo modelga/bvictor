@@ -6,14 +6,12 @@ const fs = require('fs');
 const path = require('path');
 const app = require('./app');
 
-/* eslint-disable global-require, import/no-dynamic-require */
 const cache = async lang =>
   JSON.parse(
     fs.readFileSync(
       path.join(__dirname, '..', `fixtures/${lang || 'en-gb'}.json`)
     )
   );
-/* eslint-enable */
 
 const baseConfig = {
   get(key) {
@@ -182,9 +180,9 @@ test('should use in-memory cache', async t => {
   t.pass();
 });
 
-test('should fail for unknown language', async t => {
+test('should respond with 400 bad request for invalid language', async t => {
   const server = supertest(app(baseConfig));
-  await server.get('/un-kn/sports').expect(500);
+  await server.get('/un-kn/sports').expect(400);
   t.pass();
 });
 

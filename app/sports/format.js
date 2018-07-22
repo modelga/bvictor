@@ -1,12 +1,6 @@
 const R = require('ramda');
 const links = require('./links');
-
-const langs = [
-  { lang: 'en-gb', name: 'English' },
-  { lang: 'de-de', name: 'Deutsch' },
-  { lang: 'ja-jp', name: '日本語' },
-  { lang: 'zh-cn', name: '简体中文' }
-];
+const langs = require('../common/langs');
 
 const AddSelf = R.curry((req, data) => ({
   ...data,
