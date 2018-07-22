@@ -1,11 +1,12 @@
 const R = require('ramda');
 const links = require('./links');
+const { exceptions } = require('../error');
 
 const sortByPos = R.sortBy(R.prop('pos'));
 
 const formatSport = lang =>
   R.pipe(
-    sport => R.assoc('events_count', (sport.events || []).length, sport),
+    sport => R.assoc('events_count', sport.events.length, sport),
     sport =>
       R.assoc(
         'total_outcomes',
@@ -26,6 +27,7 @@ const formatEvent = lang => sport =>
     event =>
       R.assoc('self', links.resources(lang).sportOutcomes(sport, event), event)
   );
+
 const formatOutcome = R.pick([
   'id',
   'description',
@@ -43,7 +45,7 @@ module.exports = provider => ({
     const data = await provider.getData(lang);
     const sport = R.find(R.propEq('id', sportId), data.sports);
     if (!sport) {
-      throw new Error(`Not found sport for id ${sportId}`);
+      throw new exceptions.NotFound(`Sport for id ${sportId}`);
     }
     return {
       sport: formatSport(lang)(sport),
@@ -57,11 +59,11 @@ module.exports = provider => ({
     const data = await provider.getData(lang);
     const sport = R.find(R.propEq('id', sportId), data.sports);
     if (!sport) {
-      throw new Error(`Not found sport for id ${sportId}`);
+      throw new exceptions.NotFound(`Sport for id ${sportId}`);
     }
     const event = R.find(R.propEq('id', eventId), sport.events);
-    if (!sport) {
-      throw new Error(`Not found event for id ${eventId}`);
+    if (!event) {
+      throw new exceptions.NotFound(`Event for id ${eventId}`);
     }
     return {
       sport: formatSport(lang)(sport),

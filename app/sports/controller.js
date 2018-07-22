@@ -13,7 +13,7 @@ const withTryAndFormat = controller => async (req, res, next) => {
 const withHandleErrors = R.map(withTryAndFormat);
 
 module.exports = (config, service) => {
-  const getLang = req => req.params.lang || config.get('DEFAULT_LANG');
+  const getLang = req => req.params.lang;
   return withHandleErrors({
     async sportsRedirect(req, format, res) {
       res.redirect(links.BASE_i18(config.get('DEFAULT_LANG')));
