@@ -18,7 +18,7 @@ const AddParent = R.curry((req, parent, data) => ({
 }));
 
 const AddParentFromKey = R.curry((req, parentKey, data) =>
-  AddParent(req, R.path([parentKey, 'self'], data))
+  AddParent(req, R.path([parentKey, 'self'], data), data)
 );
 
 const DefaultFormat = res => template => data => ({
@@ -36,11 +36,11 @@ const DefaultFormat = res => template => data => ({
 module.exports = (req, res) => {
   const addSelf = AddSelf(req);
   const addParent = AddParent(req);
+  const addParentFromKey = AddParentFromKey(req);
   const defaultFormat = DefaultFormat(res);
   const format = acceptTypes => res.format(acceptTypes);
   return {
     sportsList: R.pipe(
-      R.objOf('sports'),
       addSelf,
       defaultFormat('sports-list'),
       format
@@ -49,6 +49,12 @@ module.exports = (req, res) => {
       addSelf,
       addParent(links.BASE),
       defaultFormat('events-list'),
+      format
+    ),
+    outcomesList: R.pipe(
+      addSelf,
+      addParentFromKey('sport'),
+      defaultFormat('outcomes-list'),
       format
     )
   };

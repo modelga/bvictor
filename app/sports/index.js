@@ -12,6 +12,7 @@ module.exports = config => {
 
   app.get(links.BASE, controller.sportsList);
   app.get(links.resources.sportEvents(), controller.eventsList);
+  app.get(links.resources.sportOutcomes(), controller.outcomesList);
 
   return app;
 };

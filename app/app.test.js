@@ -32,7 +32,8 @@ test('should return formatted list of sports', async t => {
     title: 'string',
     self: 'string',
     pos: 'number',
-    events_count: 'number'
+    events_count: 'number',
+    total_outcomes: 'number'
   });
 
   const matchingElements = R.filter(sport.test, body.sports);
@@ -49,6 +50,7 @@ test('should eturn formatted list of events', async t => {
     title: 'string',
     self: 'string',
     pos: 'number',
+    score: 'string?',
     status: 'string',
     total_outcomes: 'number'
   });
@@ -59,7 +61,21 @@ test('should eturn formatted list of events', async t => {
 test('should navigate on list of sports', async t => {
   const server = supertest(app(proxiedBetVictorConfig));
   const sportsResponse = await server.get('/sports').expect(200);
-  const firstSport = R.path(['body', 'sports', 0], sportsResponse);
-  const eventsResponse = await server.get(firstSport.self).expect(200);
-  t.true(eventsResponse.body.events.length === firstSport.events_count);
+  const sportWithOutcomes = R.find(
+    R.pipe(
+      R.prop('total_outcomes'),
+      R.lt(0)
+    ),
+    sportsResponse.body.sports
+  );
+  const eventsResponse = await server.get(sportWithOutcomes.self).expect(200);
+  t.true(eventsResponse.body.events.length === sportWithOutcomes.events_count);
+  const eventWithOutcomes = R.find(
+    R.pipe(
+      R.prop('total_outcomes'),
+      R.lt(0)
+    ),
+    eventsResponse.body.events
+  );
+  const outcomeResponse = await server.get(eventWithOutcomes.self).expect(200);
 });

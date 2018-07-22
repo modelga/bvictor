@@ -1,9 +1,9 @@
 <ol>
-{{#if sport}}
   <dt> {{sport.title}}  </dt>
-{{/if}}
-
 {{#events}}
-  <li> <a href="{{self}}">{{title}}</a> ({{total_outcomes}} outcomes)</li>
+  <li> <a href="{{self}}">{{title}}</a> ({{total_outcomes}} outcomes{{#if score}}, score: {{score}}{{/if}})</li>
+{{/events}}
+{{^events}}
+  <li>No events</li>
 {{/events}}
 </ol>

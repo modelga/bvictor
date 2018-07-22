@@ -17,7 +17,12 @@ module.exports = service =>
       format.sportsList(await service.getSports());
     },
     async eventsList(req, format) {
-      const id = Number(req.params.id);
-      format.eventsList(await service.getEvents(id));
+      const sportId = Number(req.params.sportId);
+      format.eventsList(await service.getEvents(sportId));
+    },
+    async outcomesList(req, format) {
+      const sportId = Number(req.params.sportId);
+      const eventId = Number(req.params.eventId);
+      format.outcomesList(await service.getOutcomes(sportId, eventId));
     }
   });

@@ -1,0 +1,9 @@
+<ul>
+  <dt>{{sport.title}} -> {{event.title}} {{#score}}({{event.score}}){{/score}} </dt>
+{{#outcomes}}
+  <li> {{description}} ({{price}})</li>
+{{/outcomes}}
+{{^outcomes}}
+  <li>No outcomes</li>
+{{/outcomes}}
+</ul>

@@ -1,6 +1,10 @@
-
 <ol>
+
 {{#sports}}
-  <li> <a href="{{self}}">{{title}}</a> ({{events_count}} events)</li>
+  <li> <a href="{{self}}">{{title}}</a> ({{events_count}} events, {{total_outcomes}} outcomes)</li>
 {{/sports}}
+{{^sports}}
+  <li>No live sports</li>
+{{/sports}}
+
 </ol>
