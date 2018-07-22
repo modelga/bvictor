@@ -1,7 +1,7 @@
 class NotFound extends Error {}
 
 module.exports = {
-  exceptions: {
+  ex: {
     NotFound
   },
   // eslint-disable-next-line no-unused-vars

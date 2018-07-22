@@ -1,32 +1,31 @@
 const R = require('ramda');
 const links = require('./links');
-const { exceptions } = require('../error');
+const { ex } = require('../error');
 
 const sortByPos = R.sortBy(R.prop('pos'));
 
-const formatSport = lang =>
+const FormatSport = R.curry((lang, sport) =>
   R.pipe(
-    sport => R.assoc('events_count', sport.events.length, sport),
-    sport =>
-      R.assoc(
-        'total_outcomes',
-        R.pipe(
-          R.prop('events'),
-          R.pluck('total_outcomes'),
-          R.sum
-        )(sport),
-        sport
-      ),
+    R.assoc('events_count', sport.events.length),
+    R.assoc(
+      'total_outcomes',
+      R.pipe(
+        R.prop('events'),
+        R.pluck('total_outcomes'),
+        R.sum
+      )(sport)
+    ),
     R.pick(['title', 'id', 'pos', 'events_count', 'total_outcomes']),
-    sport => R.assoc('self', links.resources(lang).sportEvents(sport), sport)
-  );
+    R.assoc('self', links.resources(lang).sportEvents(sport))
+  )(sport)
+);
 
-const formatEvent = lang => sport =>
+const FormatEvent = R.curry((lang, sport, event) =>
   R.pipe(
     R.pick(['status', 'title', 'id', 'pos', 'total_outcomes', 'score']),
-    event =>
-      R.assoc('self', links.resources(lang).sportOutcomes(sport, event), event)
-  );
+    R.assoc('self', links.resources(lang).sportOutcomes(sport, event))
+  )(event)
+);
 
 const formatOutcome = R.pick([
   'id',
@@ -39,18 +38,23 @@ const formatOutcome = R.pick([
 module.exports = provider => ({
   async getSports(lang) {
     const data = await provider.getData(lang);
-    return { sports: sortByPos(R.map(formatSport(lang), data.sports)) };
+    return {
+      sports: R.pipe(
+        R.map(FormatSport(lang)),
+        sortByPos
+      )(data.sports)
+    };
   },
   async getEvents(lang, sportId) {
     const data = await provider.getData(lang);
     const sport = R.find(R.propEq('id', sportId), data.sports);
     if (!sport) {
-      throw new exceptions.NotFound(`Sport for id ${sportId}`);
+      throw new ex.NotFound(`Sport for id ${sportId}`);
     }
     return {
-      sport: formatSport(lang)(sport),
+      sport: FormatSport(lang, sport),
       events: R.pipe(
-        R.map(formatEvent(lang)(sport)),
+        R.map(FormatEvent(lang, sport)),
         sortByPos
       )(sport.events)
     };
@@ -59,15 +63,15 @@ module.exports = provider => ({
     const data = await provider.getData(lang);
     const sport = R.find(R.propEq('id', sportId), data.sports);
     if (!sport) {
-      throw new exceptions.NotFound(`Sport for id ${sportId}`);
+      throw new ex.NotFound(`Sport for id ${sportId}`);
     }
     const event = R.find(R.propEq('id', eventId), sport.events);
     if (!event) {
-      throw new exceptions.NotFound(`Event for id ${eventId}`);
+      throw new ex.NotFound(`Event for id ${eventId}`);
     }
     return {
-      sport: formatSport(lang)(sport),
-      event: formatEvent(lang)(sport)(event),
+      sport: FormatSport(lang, sport),
+      event: FormatEvent(lang, sport, event),
       outcomes: R.map(formatOutcome, event.outcomes)
     };
   }
