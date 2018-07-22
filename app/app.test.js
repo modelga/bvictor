@@ -18,7 +18,7 @@ const cache = async lang =>
 const baseConfig = {
   get(key) {
     if (key === 'UPSTREAM_BASE_URL')
-      return 'https://betvictor-proxy.herokuapp.com';
+      return process.env.UPSTREAM || 'https://betvictor-proxy.herokuapp.com';
     if (key === 'CACHE_ENGINE') return cache;
     if (key === 'DEFAULT_LANG') return 'en-gb';
     throw new Error(`Invalid test config key: ${key}`);
@@ -40,7 +40,7 @@ test('should return formatted list of sports', async t => {
   const server = supertest(app(baseConfig));
   const { body } = await server.get('/en-gb/sports').expect(200);
 
-  const sport = struct({
+  const Sport = struct({
     id: 'number',
     title: 'string',
     self: 'string',
@@ -48,17 +48,15 @@ test('should return formatted list of sports', async t => {
     events_count: 'number',
     total_outcomes: 'number'
   });
-
-  const matchingElements = R.filter(sport.test, body.sports);
-  t.true(matchingElements.length === body.sports.length);
+  body.sports.forEach(sport => t.true(Sport.test(sport)));
 });
 
-test('should eturn formatted list of events', async t => {
+test('should return formatted list of events', async t => {
   const server = supertest(app(baseConfig));
   const sportsResponse = await server.get('/en-gb/sports').expect(200);
   const firstSport = R.path(['body', 'sports', 0], sportsResponse);
   const { body } = await server.get(firstSport.self).expect(200);
-  const event = struct({
+  const Event = struct({
     id: 'number',
     title: 'string',
     self: 'string',
@@ -67,8 +65,7 @@ test('should eturn formatted list of events', async t => {
     status: 'string',
     total_outcomes: 'number'
   });
-  const matchingElements = R.filter(event.test, body.events);
-  t.true(matchingElements.length === body.events.length);
+  body.events.forEach(event => t.true(Event.test(event)));
 });
 
 test('should navigate on list of sports', async t => {
@@ -93,6 +90,36 @@ test('should navigate on list of sports', async t => {
   const outcomeResponse = await server.get(eventWithOutcomes.self).expect(200);
   const { outcomes } = outcomeResponse.body;
   t.true(outcomes.length === eventWithOutcomes.total_outcomes);
+});
+
+test('should return formatted outcome', async t => {
+  const server = supertest(app(baseConfig));
+  const sportsResponse = await server.get('/en-gb/sports').expect(200);
+  const sportWithOutcomes = R.find(
+    R.pipe(
+      R.prop('total_outcomes'),
+      R.lt(0)
+    ),
+    sportsResponse.body.sports
+  );
+  const eventsResponse = await server.get(sportWithOutcomes.self).expect(200);
+  const eventWithOutcomes = R.find(
+    R.pipe(
+      R.prop('total_outcomes'),
+      R.lt(0)
+    ),
+    eventsResponse.body.events
+  );
+  const outcomeResponse = await server.get(eventWithOutcomes.self).expect(200);
+  const { outcomes } = outcomeResponse.body;
+  const Outcome = struct({
+    id: 'number',
+    description: 'string',
+    price: 'string',
+    price_decimal: 'number',
+    price_id: 'number'
+  });
+  outcomes.forEach(outcome => t.true(Outcome.test(outcome)));
 });
 
 test('should redirect to default language', async t => {
@@ -158,5 +185,31 @@ test('should use in-memory cache', async t => {
 test('should fail for unknown language', async t => {
   const server = supertest(app(baseConfig));
   await server.get('/un-kn/sports').expect(500);
+  t.pass();
+});
+
+test('should use redis cache fallback', async t => {
+  const config = {
+    get(key) {
+      if (key === 'CACHE_ENGINE') return 'redis';
+      if (key === 'CACHE_TTL_SECONDS') return 1;
+      if (key === 'REDIS_URL') return 'redis://redis';
+      return baseConfig.get(key);
+    }
+  };
+  const server = supertest(app(config));
+  await server.get('/en-gb/sports').expect(200);
+  t.pass();
+});
+
+test('should use no-cache', async t => {
+  const config = {
+    get(key) {
+      if (key === 'CACHE_ENGINE') return 'none';
+      return baseConfig.get(key);
+    }
+  };
+  const server = supertest(app(config));
+  await server.get('/en-gb/sports').expect(200);
   t.pass();
 });
