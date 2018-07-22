@@ -2,13 +2,25 @@ const { struct } = require('superstruct');
 const test = require('ava');
 const supertest = require('supertest');
 const R = require('ramda');
+const fs = require('fs');
+const path = require('path');
 const app = require('./app');
+
+/* eslint-disable global-require, import/no-dynamic-require */
+const cache = async lang =>
+  JSON.parse(
+    fs.readFileSync(
+      path.join(__dirname, '..', `fixtures/${lang || 'en-gb'}.json`)
+    )
+  );
+/* eslint-enable */
 
 const proxiedBetVictorConfig = {
   get(key) {
     if (key === 'UPSTREAM_BASE_URL')
       return 'https://betvictor-proxy.herokuapp.com';
-    throw new Error('Invalid key');
+    if (key === 'CACHE_ENGINE') return cache;
+    throw new Error('Invalid test config key');
   }
 };
 

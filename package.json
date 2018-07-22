@@ -9,9 +9,13 @@
     },
     "dependencies": {
         "axios": "0.18.0",
+        "debug": "3.1.0",
         "express": "4.16.3",
         "hbs": "4.0.1",
+        "mem": "3.0.1",
+        "memoizee": "0.4.12",
         "ramda": "0.25.0",
+        "redis-fast-driver": "2.1.2",
         "superstruct": "0.5.4",
         "varium": "1.0.1"
     },
