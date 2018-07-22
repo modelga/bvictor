@@ -16,7 +16,7 @@ module.exports = (config, dataFn) => {
       return InMemory(config, dataFn);
     case 'redis':
       log('Using redis cache');
-      return Redis(config, dataFn);
+      return Redis(config, dataFn, InMemory(config, dataFn));
     case 'none':
     default:
       return dataFn;
