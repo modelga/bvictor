@@ -1,7 +1,7 @@
 const componentTests = require('./app.component.suite.test');
 const integrationTests = require('./app.integration.suite.test');
 
-const config = {
+const integrationConfig = {
   get(key) {
     if (key === 'UPSTREAM_BASE_URL') return process.env.UPSTREAM_BASE_URL;
     if (key === 'CACHE_ENGINE') return 'in-memory';
@@ -11,5 +11,5 @@ const config = {
   }
 };
 
-componentTests(config);
-integrationTests(config);
+componentTests(integrationConfig);
+integrationTests(integrationConfig);

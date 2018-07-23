@@ -16,7 +16,7 @@ module.exports = config =>
       }
       return response.data;
     } catch (e) {
-      log('Failed to refresh', e.text);
+      log('Failed to refresh', e.message);
       throw e;
     }
   });

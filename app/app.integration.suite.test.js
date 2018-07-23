@@ -66,4 +66,17 @@ module.exports = baseConfig => {
     const { text } = await server.get('/en-gb/sports').expect(500);
     t.is(text, 'Cannot fetch data from upstream');
   });
+
+  test('should pass upstream fail cause with code=500', async t => {
+    const config = {
+      get(key) {
+        if (key === 'UPSTREAM_BASE_URL') return 'https://httpstat.us/404';
+        if (key === 'CACHE_ENGINE') return 'none';
+        return baseConfig.get(key);
+      }
+    };
+    const server = supertest(app(config));
+    const { text } = await server.get('/en-gb/sports').expect(500);
+    t.is(text, 'Request failed with status code 404');
+  });
 };
