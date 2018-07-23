@@ -1,0 +1,10 @@
+node_modules/
+fixtures/
+.vscode
+.git
+.gitignore
+.nyc_output
+.env
+Dockerfile
+.travis.yml
+README.md
