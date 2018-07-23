@@ -35,6 +35,20 @@ $ docker run -p 3000:3000 -d --name bvictor bvictor
 
 After these two you should get up & running application on http://docker-machine-ip:3000
 
+## How to run on Heroku 
+
+Prerequisite: [heroku](https://heroku.com) account and[heroku-cli](https://www.npmjs.com/package/heroku)
+
+```
+$ heroku apps:create --region=eu  --addons=heroku-redis:hobby-dev [app_name] 
+$ heroku config:set CACHE_ENGINE=redis
+$ heroku git:remote -r [remote_name] -a [app_name] 
+$ git push [remote_name] master
+```
+
+Your app should be accesible under https://[app_name].herokuapp.com 
+
+
 # Demo
 
 Using browser application will take `Accept` header and respond with 'non styled' html pages, with basic navigation. To get JSON output, change `Accept` header to `application/json` or change your client to e.g. Postman, curl -H "Accept: application/json". 
