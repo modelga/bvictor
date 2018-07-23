@@ -3,6 +3,18 @@ node_js:
   - "8" 
 services:
   - redis-server
-before_script: npm run lint
-script: npm run test:integration
-after_script: npm run test:coverage
+
+install:
+  - npm install
+  - npm install -g codecov
+
+before_script:
+  - npm run lint
+
+script: 
+  - npm test
+  - npm run test:integration
+
+after_script:
+  - npm run test:coverage
+  - npm run test:coverage:report

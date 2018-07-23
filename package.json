@@ -2,11 +2,13 @@
     "scripts": {
         "start": "cross-env DEBUG=bet-victor:* node app",
         "start:local": "npx nf start",
+        "start:redis-local": "cross-env CACHE_ENGINE=redis REDIS_URL=redis://localhost:6379 npm start",
         "test": "ava **/*test.js !**/*integration*.test.js !**/*suite*.test.js",
         "test:integration": "ava **/*test.js !**/*suite*.test.js",
         "test:coverage": "npx nyc --all ava",
         "lint": "zoe",
-        "format": "zoe --fix"
+        "format": "zoe --fix",
+        "test:coverage:report": "npx nyc report --reporter=text-lcov > coverage.lcov && codecov"
     },
     "dependencies": {
         "axios": "0.18.0",
