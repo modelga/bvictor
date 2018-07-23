@@ -1,13 +1,15 @@
 const test = require('ava');
 const supertest = require('supertest');
 const app = require('./app');
+const DB = require('../app/cache/redis-db');
 
 module.exports = baseConfig => {
   test('should integrate with upstream', async t => {
     const server = supertest(app(baseConfig));
-    await server.get('/en-gb/sports').expect(200);
-    t.pass();
+    const { body } = await server.get('/en-gb/sports').expect(200);
+    t.true(body.sports.length > 0);
   });
+
   test('should use redis cache fallback', async t => {
     const config = {
       get(key) {
@@ -18,8 +20,8 @@ module.exports = baseConfig => {
       }
     };
     const server = supertest(app(config));
-    await server.get('/en-gb/sports').expect(200);
-    t.pass();
+    const { body } = await server.get('/en-gb/sports').expect(200);
+    t.true(body.sports.length > 0);
   });
 
   test('should use redis if defined', async t => {
@@ -32,8 +34,11 @@ module.exports = baseConfig => {
       }
     };
     const server = supertest(app(config));
-    await server.get('/en-gb/sports').expect(200);
-    t.pass();
+    const { body } = await server.get('/en-gb/sports').expect(200);
+    const db = DB(config);
+    const data = JSON.parse(await db.rawCallAsync(['GET', 'en-gb']));
+    t.truthy(data);
+    t.true(data.sports.length === body.sports.length);
   });
 
   test('should use no-cache', async t => {
@@ -44,8 +49,8 @@ module.exports = baseConfig => {
       }
     };
     const server = supertest(app(config));
-    await server.get('/en-gb/sports').expect(200);
-    t.pass();
+    const { body } = await server.get('/en-gb/sports').expect(200);
+    t.true(body.sports.length > 0);
   });
 
   test('should fail for invalid upstream', async t => {

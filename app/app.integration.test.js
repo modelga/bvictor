@@ -11,5 +11,5 @@ const config = {
   }
 };
 
-integrationTests(config);
 componentTests(config);
+integrationTests(config);

@@ -18,4 +18,5 @@ const config = {
     throw new Error(`Invalid test config key: ${key}`);
   }
 };
+
 componentTests(config);
