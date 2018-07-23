@@ -11,6 +11,7 @@ module.exports = config => {
   const liveDataService = LiveDataService(liveDataProvider);
   const controller = Controller(config, liveDataService);
 
+  app.get('/', controller.sportsRedirect);
   app.get(links.BASE, controller.sportsRedirect);
   app.get(
     links.BASE_i18(':lang'),
