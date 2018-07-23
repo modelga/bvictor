@@ -20,7 +20,6 @@ const validate = requestType => (req, res, next) => {
 const langs = require('../common/langs');
 
 const lang = { lang: struct.enum(R.pluck('lang', langs)) };
-
 const sportId = { sportId: 'numberlike' };
 const eventId = { eventId: 'numberlike' };
 
