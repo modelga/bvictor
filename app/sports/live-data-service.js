@@ -35,9 +35,9 @@ const formatOutcome = R.pick([
   'price_id'
 ]);
 
-module.exports = provider => ({
+module.exports = getData => ({
   async getSports(lang) {
-    const data = await provider.getData(lang);
+    const data = await getData(lang);
     return {
       sports: R.pipe(
         R.map(FormatSport(lang)),
@@ -46,7 +46,7 @@ module.exports = provider => ({
     };
   },
   async getEvents(lang, sportId) {
-    const data = await provider.getData(lang);
+    const data = await getData(lang);
     const sport = R.find(R.propEq('id', sportId), data.sports);
     if (!sport) {
       throw new ex.NotFound(`Sport for id ${sportId}`);
@@ -60,7 +60,7 @@ module.exports = provider => ({
     };
   },
   async getOutcomes(lang, sportId, eventId) {
-    const data = await provider.getData(lang);
+    const data = await getData(lang);
     const sport = R.find(R.propEq('id', sportId), data.sports);
     if (!sport) {
       throw new ex.NotFound(`Sport for id ${sportId}`);

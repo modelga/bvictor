@@ -4,15 +4,19 @@ const debug = require('debug');
 const log = debug('bet-victor:sports-live:provider');
 const Cache = require('../cache');
 
-module.exports = config => {
-  const getData = async lang => {
+module.exports = config =>
+  Cache(config, async lang => {
     log('Refresh live data');
-    const response = await axios.get(
-      `${config.get('UPSTREAM_BASE_URL')}/${lang}/live/live/list.json`
-    );
-    return response.data;
-  };
-  const getDataWithCache = Cache(config, getData);
-
-  return { getData: getDataWithCache };
-};
+    try {
+      const response = await axios.get(
+        `${config.get('UPSTREAM_BASE_URL')}/${lang}/live/live/list.json`
+      );
+      if (response.headers['content-type'].indexOf('text/') !== -1) {
+        throw new Error('Cannot fetch data from upstream');
+      }
+      return response.data;
+    } catch (e) {
+      log('Failed to refresh', e.text);
+      throw e;
+    }
+  });

@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "start": "node app",
+        "start": "cross-env DEBUG=bet-victor:* node app",
         "start:local": "npx nf start",
         "test": "ava **/*test.js !**/*integration*.test.js !**/*suite*.test.js",
         "test:integration": "ava **/*test.js !**/*suite*.test.js",
@@ -10,6 +10,7 @@
     },
     "dependencies": {
         "axios": "0.18.0",
+        "cross-env": "5.2.0",
         "debug": "3.1.0",
         "express": "4.16.3",
         "hbs": "4.0.1",
@@ -32,7 +33,7 @@
         ]
     },
     "ava": {
-        "files" : [
+        "files": [
             "**/*.test.js",
             "!**/*suite*.test.js"
         ]
